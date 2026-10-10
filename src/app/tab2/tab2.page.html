@@ -18,45 +18,72 @@
         <p>Počet záznamů: {{ counterService.counters().length }}</p>
         <p>Součet hodnot: {{ totalValue() }}</p>
       </div>
-      <ion-button color="danger" fill="outline" size="small" (click)="clear()">
+
+      <ion-button
+        color="danger"
+        fill="outline"
+        size="small"
+        (click)="clear()"
+      >
         Vymazat vše
       </ion-button>
     </div>
 
-<ion-searchbar
-  class="search"
-  placeholder="Vyhledat podle názvu"
-  [value]="searchText()"
-  (ionInput)="searchText.set($event.detail.value ?? '')"
-></ion-searchbar>
+    <ion-searchbar
+      class="search"
+      placeholder="Vyhledat podle názvu"
+      [value]="searchText()"
+      (ionInput)="searchText.set($event.detail.value ?? '')"
+    ></ion-searchbar>
 
-      <ion-item class="sorting">
-    <ion-select
-      label="Řazení"
-      interface="popover"
-      [value]="sortBy()"
-      (ionChange)="sortBy.set($event.detail.value)"
-    >
-      <ion-select-option value="newest">
-        Od nejnovějších
-      </ion-select-option>
+    <ion-item class="sorting">
+      <ion-select
+        label="Řazení"
+        interface="popover"
+        [value]="sortBy()"
+        (ionChange)="sortBy.set($event.detail.value)"
+      >
+        <ion-select-option value="newest">
+          Od nejnovějších
+        </ion-select-option>
 
-      <ion-select-option value="name">
-        Podle názvu A–Z
-      </ion-select-option>
+        <ion-select-option value="name">
+          Podle názvu A–Z
+        </ion-select-option>
 
-      <ion-select-option value="valueAsc">
-        Hodnota od nejmenší
-      </ion-select-option>
+        <ion-select-option value="valueAsc">
+          Hodnota od nejmenší
+        </ion-select-option>
 
-      <ion-select-option value="valueDesc">
-        Hodnota od největší
-      </ion-select-option>
-    </ion-select>
-  </ion-item>
+        <ion-select-option value="valueDesc">
+          Hodnota od největší
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
+
+    <ion-item class="value-filter">
+      <ion-select
+        label="Filtrovat hodnoty"
+        interface="popover"
+        [value]="valueFilter()"
+        (ionChange)="valueFilter.set($event.detail.value)"
+      >
+        <ion-select-option value="all">
+          Všechny
+        </ion-select-option>
+
+        <ion-select-option value="positive">
+          Kladné
+        </ion-select-option>
+
+        <ion-select-option value="negative">
+          Záporné
+        </ion-select-option>
+      </ion-select>
+    </ion-item>
 
     <ion-list>
-            @for (counter of filteredCounters(); track counter.id) {
+      @for (counter of filteredCounters(); track counter.id) {
         <ion-item>
           <ion-label>
             <h2>{{ counter.name }}</h2>
@@ -75,12 +102,11 @@
             Odstranit
           </ion-button>
         </ion-item>
+      } @empty {
+        <p class="state-message">
+          Žádné počítadlo neodpovídá vyhledávání nebo filtru.
+        </p>
       }
-      @empty {
-  <p class="state-message">
-    Žádné počítadlo neodpovídá hledání.
-  </p>
-}
     </ion-list>
   }
 </ion-content>

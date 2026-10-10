@@ -46,6 +46,7 @@ export class Tab2Page implements OnInit {
 
   readonly sortBy = signal('newest');
   readonly searchText = signal('');
+  readonly valueFilter = signal('');
 
 readonly sortedCounters = computed(() => {
   const counters = [...this.counterService.counters()];
@@ -69,10 +70,23 @@ readonly sortedCounters = computed(() => {
 
 readonly filteredCounters = computed(() => {
   const search = this.searchText().trim().toLocaleLowerCase('cs');
+  const filter = this.valueFilter();
 
-  return this.sortedCounters().filter((counter) =>
-    counter.name.toLocaleLowerCase('cs').includes(search),
-  );
+  return this.sortedCounters().filter((counter) => {
+    const matchesName = counter.name
+      .toLocaleLowerCase('cs')
+      .includes(search);
+
+    let matchesValue = true;
+
+    if (filter === 'positive') {
+      matchesValue = counter.value > 0;
+    } else if (filter === 'negative') {
+      matchesValue = counter.value < 0;
+    }
+
+    return matchesName && matchesValue;
+  });
 });
 
   readonly totalValue = computed(() => {
