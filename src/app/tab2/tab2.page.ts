@@ -12,6 +12,7 @@ import {
   IonSpinner,
   IonTitle,
   IonToolbar,
+  IonSearchbar,
 } from '@ionic/angular';
 import { CounterService } from '../services/counter.service';
 
@@ -33,12 +34,14 @@ import { CounterService } from '../services/counter.service';
     IonToolbar,
     IonSelect,
     IonSelectOption,
+    IonSearchbar,
   ],
 })
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
 
   readonly sortBy = signal('newest');
+  readonly searchText = signal('');
 
 readonly sortedCounters = computed(() => {
   const counters = [...this.counterService.counters()];
@@ -59,6 +62,15 @@ readonly sortedCounters = computed(() => {
 
   return counters;
 });
+
+readonly filteredCounters = computed(() => {
+  const search = this.searchText().trim().toLocaleLowerCase('cs');
+
+  return this.sortedCounters().filter((counter) =>
+    counter.name.toLocaleLowerCase('cs').includes(search),
+  );
+});
+
   readonly totalValue = computed(() => {
   let total = 0;
 
