@@ -14,6 +14,7 @@ import {
   IonToolbar,
   IonSearchbar,
   AlertController,
+  ToastController,
 } from '@ionic/angular';
 import { CounterService } from '../services/counter.service';
 
@@ -41,6 +42,7 @@ import { CounterService } from '../services/counter.service';
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
   private readonly alertController = inject(AlertController);
+  private readonly toastController = inject(ToastController);
 
   readonly sortBy = signal('newest');
   readonly searchText = signal('');
@@ -87,9 +89,10 @@ readonly filteredCounters = computed(() => {
     await this.counterService.initialize();
   }
 
-  async remove(id: string): Promise<void> {
-    await this.counterService.remove(id);
-  }
+async remove(id: string): Promise<void> {
+  await this.counterService.remove(id);
+  await this.showToast('Záznam byl odstraněn.');
+}
 
 async clear(): Promise<void> {
   const alert = await this.alertController.create({
@@ -111,8 +114,19 @@ async clear(): Promise<void> {
 
   const result = await alert.onDidDismiss();
 
-  if (result.role === 'confirm') {
-    await this.counterService.clear();
-  }
+if (result.role === 'confirm') {
+  await this.counterService.clear();
+  await this.showToast('Celá historie byla vymazána.');
+}
+}
+private async showToast(message: string): Promise<void> {
+  const toast = await this.toastController.create({
+    message,
+    duration: 2000,
+    position: 'top',
+    color: 'success',
+  });
+
+  await toast.present();
 }
 }
