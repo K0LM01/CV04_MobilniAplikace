@@ -23,8 +23,33 @@
       </ion-button>
     </div>
 
+      <ion-item class="sorting">
+    <ion-select
+      label="Řazení"
+      interface="popover"
+      [value]="sortBy()"
+      (ionChange)="sortBy.set($event.detail.value)"
+    >
+      <ion-select-option value="newest">
+        Od nejnovějších
+      </ion-select-option>
+
+      <ion-select-option value="name">
+        Podle názvu A–Z
+      </ion-select-option>
+
+      <ion-select-option value="valueAsc">
+        Hodnota od nejmenší
+      </ion-select-option>
+
+      <ion-select-option value="valueDesc">
+        Hodnota od největší
+      </ion-select-option>
+    </ion-select>
+  </ion-item>
+
     <ion-list>
-      @for (counter of counterService.counters(); track counter.id) {
+            @for (counter of sortedCounters(); track counter.id) {
         <ion-item>
           <ion-label>
             <h2>{{ counter.name }}</h2>

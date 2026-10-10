@@ -1,5 +1,4 @@
-import { Component, computed, inject, OnInit } from '@angular/core';
-import { DatePipe } from '@angular/common';
+import { Component, computed, inject, OnInit, signal } from '@angular/core';import { DatePipe } from '@angular/common';
 import {
   IonButton,
   IonContent,
@@ -8,6 +7,8 @@ import {
   IonLabel,
   IonList,
   IonNote,
+  IonSelect,
+  IonSelectOption,
   IonSpinner,
   IonTitle,
   IonToolbar,
@@ -30,11 +31,34 @@ import { CounterService } from '../services/counter.service';
     IonSpinner,
     IonTitle,
     IonToolbar,
+    IonSelect,
+    IonSelectOption,
   ],
 })
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
- 
+
+  readonly sortBy = signal('newest');
+
+readonly sortedCounters = computed(() => {
+  const counters = [...this.counterService.counters()];
+  const sorting = this.sortBy();
+
+  if (sorting === 'name') {
+    counters.sort((a, b) => a.name.localeCompare(b.name, 'cs'));
+  } else if (sorting === 'valueAsc') {
+    counters.sort((a, b) => a.value - b.value);
+  } else if (sorting === 'valueDesc') {
+    counters.sort((a, b) => b.value - a.value);
+  } else {
+    counters.sort(
+      (a, b) =>
+        new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+    );
+  }
+
+  return counters;
+});
   readonly totalValue = computed(() => {
   let total = 0;
 
