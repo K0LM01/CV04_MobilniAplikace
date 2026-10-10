@@ -13,6 +13,7 @@ import {
   IonTitle,
   IonToolbar,
   IonSearchbar,
+  AlertController,
 } from '@ionic/angular';
 import { CounterService } from '../services/counter.service';
 
@@ -39,6 +40,7 @@ import { CounterService } from '../services/counter.service';
 })
 export class Tab2Page implements OnInit {
   readonly counterService = inject(CounterService);
+  private readonly alertController = inject(AlertController);
 
   readonly sortBy = signal('newest');
   readonly searchText = signal('');
@@ -89,7 +91,28 @@ readonly filteredCounters = computed(() => {
     await this.counterService.remove(id);
   }
 
-  async clear(): Promise<void> {
+async clear(): Promise<void> {
+  const alert = await this.alertController.create({
+    header: 'Vymazat historii?',
+    message: 'Opravdu chceš odstranit všechna uložená počítadla?',
+    buttons: [
+      {
+        text: 'Zrušit',
+        role: 'cancel',
+      },
+      {
+        text: 'Vymazat',
+        role: 'confirm',
+      },
+    ],
+  });
+
+  await alert.present();
+
+  const result = await alert.onDidDismiss();
+
+  if (result.role === 'confirm') {
     await this.counterService.clear();
   }
+}
 }
